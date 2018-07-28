@@ -7,7 +7,7 @@ enum process_combo_event {
 
 const uint16_t PROGMEM comboMain2Fn[] = {KC_LEFT, KC_RIGHT, COMBO_END};
 const uint16_t PROGMEM comboFn2Main[] = {KC_HOME, KC_END, COMBO_END};
-combo_t key_combos[0] = {
+combo_t key_combos[2] = {
     [COMBO_MAIN2FN] = COMBO_ACTION(comboMain2Fn),
     [COMBO_FN2MAIN] = COMBO_ACTION(comboFn2Main),
 };
