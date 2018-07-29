@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_COLS 4
 
 /* pin-out */
-#define MATRIX_ROW_PINS { C2 }
-#define MATRIX_COL_PINS { D0, D1, D2, D3 }
+#define MATRIX_ROW_PINS { D2 }
+#define MATRIX_COL_PINS { D1, D3, D4, D5 }
 #define UNUSED_PINS
 
 #define TAPPING_TERM 200
