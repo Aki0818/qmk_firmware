@@ -40,5 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM 200
 
 #define COMBO_COUNT 2
+#define ONESHOT_TAP_TOGGLE 10
+#define ONESHOT_TIMEOUT 1000
 
 #endif

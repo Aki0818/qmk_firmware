@@ -20,11 +20,18 @@ void process_combo_event(uint8_t combo_index, bool pressed) {
     case COMBO_MAIN2FN:
         if (pressed) {
             layer_on(_FN);
-        }
-        break;
+	    //set_oneshot_layer(_FN,ONESHOT_START);
+	    //clear_oneshot_layer_state(ONESHOT_PRESSED);
+	    //clear_keyboard();
+	    //send_keyboard_report();
+	}
+	break;
     case COMBO_FN2MAIN:
-        if (pressed) {
+       if (pressed) {
             layer_off(_FN);
+	    //reset_oneshot_layer();
+	    //clear_keyboard();
+	    //send_keyboard_report();
         }
         break;
     }

@@ -129,7 +129,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |      |      |      |      |      |      |      |      |      |      |      |      |      |      |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_ADJUST] =  LAYOUT( \
+  [_FN3] =  LAYOUT( \
       RESET,   _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
       _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
       _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
@@ -174,12 +174,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
           TOG_STATUS = !TOG_STATUS;
         }
-        layer_on(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_on(_FN1);
+        update_tri_layer_RGB(_FN1, _FN2, _FN3);
       } else {
         TOG_STATUS = false;
-        layer_off(_LOWER);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_off(_FN1);
+        update_tri_layer_RGB(_FN1, _FN2, _FN3);
       }
       return false;
       break;
@@ -191,23 +191,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
           TOG_STATUS = !TOG_STATUS;
         }
-        layer_on(_RAISE);
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        layer_on(_FN2);
+        update_tri_layer_RGB(_FN1, _FN2, _FN3);
       } else {
-        layer_off(_RAISE);
+        layer_off(_FN2);
         TOG_STATUS = false;
-        update_tri_layer_RGB(_LOWER, _RAISE, _ADJUST);
+        update_tri_layer_RGB(_FN1, _FN2, _FN3);
       }
       return false;
       break;
-    case ADJUST:
+    /*case FN3:
         if (record->event.pressed) {
           layer_on(_ADJUST);
         } else {
           layer_off(_ADJUST);
         }
         return false;
-        break;
+        break;*/
       //led operations - RGB mode change now updates the RGB_current_mode to allow the right RGB mode to be set after reactive keys are released
     case EISU:
       if (record->event.pressed) {
