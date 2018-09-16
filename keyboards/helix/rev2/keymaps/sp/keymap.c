@@ -11,6 +11,14 @@
   #include "ssd1306.h"
 #endif
 
+#define ABACK LALT(KC_LEFT)
+#define ANEXT LALT(KC_RGHT)
+#define CAD LCA(KC_DEL)
+#define SCE LCTL(LSFT(KC_ESC))
+#define CA+Z LCTL(LALT(KC_Z))
+#define CS+Z LCTL(LSFT(KC_Z))
+
+
 extern keymap_config_t keymap_config;
 
 #ifdef RGBLIGHT_ENABLE
@@ -25,20 +33,21 @@ extern uint8_t is_master;
 // Layer names don't all need to be of the same length, obviously, and you can also skip them
 // entirely and just use numbers.
 enum layer_number {
-    _QWERTY = 0,
-    _FN1,
-    _FN2,
-    _FN3
+    _BASE = 0,
+    _F_INPUT,
+    _F_CTRL,
+    _F_KBD,
+    _CURSOR
 };
 
 enum custom_keycodes {
-  QWERTY = SAFE_RANGE,
-  FN1,
-  FN2,
-  FN3,
+  BASE = SAFE_RANGE,
+  F_INPUT,
+  F_CTRL,
+  F_KBD,
   EISU,
   KANA,
-  
+  CrLCK,
 };
 
 enum macro_keycodes {
@@ -53,28 +62,28 @@ enum macro_keycodes {
 #define M_SAMPLE M(KC_SAMPLEMACRO)
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-  /* Qwerty
+  /* BASE
    * ,-----------------------------------------.             ,-----------------------------------------.
    * | ESC  |   1  |   2  |   3  |   4  |   5  |             |   6  |   7  |   8  |   9  |   0  | Bksp |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * | Tab  |   Q  |   W  |   E  |   R  |   T  |             |   Y  |   U  |   I  |   O  |   P  |      |
+   * | Tab  |   Q  |   W  |   E  |   R  |   T  |             |   Y  |   U  |   I  |   O  |   P  |FINPUT|
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
    * | Ctrl |   A  |   S  |   D  |   F  |   G  |             |   H  |   J  |   K  |   L  |   ;  |Enter |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * | Shift|   Z  |   X  |   C  |   V  |   B  | Fn2  | Fn2  |   N  |   M  |   ,  |   .  |   /  |Shift |
+   * | Shift|   Z  |   X  |   C  |   V  |   B  | FCTRL| FCTRL|   N  |   M  |   ,  |   .  |   /  |Shift |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * | EISU | Alt  | Win  |      |      |Space | Fn1  | Fn1  |Space |      |      |      |      |      |
+   * | EISU | Win  | Alt  |      |      |Space |FINPUT|FINPUT|Space |      | CrLK | BACK |      | NEXT |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_QWERTY] = LAYOUT( \
-      KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC, \
-      KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    XXXXXXX, \
-      KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_ENT, \
-      KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,      FN2,      FN2, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT , \
-      EISU, KC_LALT, KC_LGUI, XXXXXXX, XXXXXXX,  KC_SPC,      FN1,      FN1, KC_SPC, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX \
+  [_BASE] = LAYOUT( \
+       KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_BSPC, \
+       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, F_INPUT, \
+      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_ENT , \
+      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,  F_CTRL,  F_CTRL,    KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_RSFT, \
+         EISU, KC_LGUI, KC_LALT, XXXXXXX, XXXXXXX,  KC_SPC, F_INPUT, F_INPUT,  KC_SPC, XXXXXXX,   CrLCK,   ABACK, XXXXXXX,   ANEXT  \
       ),
 
-  /* FN1
+  /* F_INPUT
    * ,-----------------------------------------.             ,-----------------------------------------.
    * |      |   `  |      |      |      |      |             |      |      |   -  |   =  |  \   | DEL  |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
@@ -84,57 +93,79 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
    * |      |      |      |      |      |      |      |      |      |      |      |      | Up   |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * |      |      |      |      |      |      |      |      |      |      |      | Left | Down |Right |
+   * |      |      |      |      | MUHEN|      |      |      |      | HENK | CrLK | Left | Down |Right |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_FN1] = LAYOUT( \
+  [_F_INPUT] = LAYOUT( \
       _______,  KC_GRV, _______, _______, _______, _______,                   _______, _______, KC_MINS,  KC_EQL, KC_BSLS,  KC_DEL, \
       _______, _______, _______, _______, _______, _______,                   _______, _______, _______, KC_LBRC, KC_RBRC, _______, \
       _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, KC_QUOT, _______, \
       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   KC_UP, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_LEFT, KC_DOWN, KC_RGHT \
+      _______, _______, _______, _______, KC_MHEN, _______, _______, _______, _______, KC_HENK,   CrLCK, KC_LEFT, KC_DOWN, KC_RGHT  \
       ),
 
-  /* Raise
+  /* F_CTRL
    * ,-----------------------------------------.             ,-----------------------------------------.
-   * |      |  F1  |  F2  |  F3  |  F4  |  F5  |             |  F6  |  F7  |  F8  |  F9  |  F10 | DEL  |
+   * |  SCE |  F1  |  F2  |  F3  |  F4  |  F5  |             |  F6  |  F7  |  F8  |  F9  |  F10 | CAD  |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * |      |  F11 | F12  |      |      |      |             |      |      |      |      |      |      |
+   * |      |  F11 |  F12 |      |      |      |             |      |      |      |      |      |      |
+   * |------+------+------+------+------+------|             |------+------+------+------+------+------|
+   * |      |      |      |      |  INS | Pause|             |      |      |      |      |      |      |
+   * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
+   * |      | CA+Z | CS+Z |      |      |      |      |      |      |      |      |      | PgUP |      |
+   * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
+   * |      |      |      |CAPSL | SCRL |      |      |      |      | PRSC | CrLK | Home | PgDn | End  |
+   * `-------------------------------------------------------------------------------------------------'
+   */
+  [_F_CTRL] = LAYOUT( \
+          SCE,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,     CAD, \
+      _______,  KC_F11,  KC_F12, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
+      _______, _______, _______, _______,  KC_INS, KC_PAUS,                   _______, _______, _______, _______, _______, _______, \
+      _______,    CA+Z,    CS+Z, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGUP, _______, \
+      _______, _______, _______, KC_CAPS, KC_SLCK, _______, _______, _______, _______, KC_PSCR,   CrLCK, KC_HOME, KC_PGDN, KC_END \
+      ),
+
+  /* CURSOR
+   * ,-----------------------------------------.             ,-----------------------------------------.
+   * |      |      |      |      |      |      |             |      |      |      |      |      |      |
+   * |------+------+------+------+------+------|             |------+------+------+------+------+------|
+   * |      |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
    * |      |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * |      |      |      |      |      |      |      |      |      |      |      |      | PgUP |      |
+   * |      |      |      |      |      |      |      |      |      |      |      |      | Up   |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * |      |      |      |      |      |      |      |      |      |      |      | Home | PgDn | End  |
+   * |      |      |      |      |      |      |      |      |      |      | CrLK | Left | Down |Right |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_FN2] = LAYOUT( \
-      _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_DEL, \
-      _______,  KC_F11,  KC_F12, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
+  [_CURSOR] = LAYOUT( \
       _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGUP, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_HOME, KC_PGDN, KC_END \
+      _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
+      _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
+      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   KC_UP, _______, \
+      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   CrLCK, KC_LEFT, KC_DOWN, KC_RGHT  \
       ),
+
 
   /* Adjust (Lower + Raise)
    * ,-----------------------------------------.             ,-----------------------------------------.
    * |Reset |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
-   * |      |      |      |      |      |      |             |      |      |      |      |      |      |
+   * |DEBUG |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------|             |------+------+------+------+------+------|
    * |      |      |      |      |      |      |             |      |      |      |      |      |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
    * |      |      |      |      |      |      |      |      |      |      |      |      |      |      |
    * |------+------+------+------+------+------+------+------+------+------+------+------+------+------|
-   * |      |      |      |      |      |      |      |      |      |      |      |      |      |      |
+   * |      |      |      |      |      |      |      |      |      |      | CrLK |      |      |      |
    * `-------------------------------------------------------------------------------------------------'
    */
-  [_FN3] =  LAYOUT( \
-      RESET,   _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
-      _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
+  [_F_KBD] =  LAYOUT( \
+        RESET, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
+        DEBUG, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
       _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
-      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ \
+      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   CrLCK, _______, _______, _______ \
       )
 };
 
@@ -166,7 +197,7 @@ void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
  
-    case FN1:
+    case F_INPUT:
       if (record->event.pressed) {
           //not sure how to have keyboard check mode and set it to a variable, so my work around
           //uses another variable that would be set to true after the first time a reactive key is pressed.
@@ -174,16 +205,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
           TOG_STATUS = !TOG_STATUS;
         }
-        layer_on(_FN1);
-        update_tri_layer_RGB(_FN1, _FN2, _FN3);
+        layer_on(_F_INPUT);
+        update_tri_layer_RGB(_F_INPUT, _F_CTRL, _F_KBD);
       } else {
         TOG_STATUS = false;
-        layer_off(_FN1);
-        update_tri_layer_RGB(_FN1, _FN2, _FN3);
+        layer_off(_F_INPUT);
+        update_tri_layer_RGB(_F_INPUT, _F_CTRL, _F_KBD);
       }
       return false;
       break;
-    case FN2:
+    case F_CTRL:
       if (record->event.pressed) {
         //not sure how to have keyboard check mode and set it to a variable, so my work around
         //uses another variable that would be set to true after the first time a reactive key is pressed.
@@ -191,23 +222,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
           TOG_STATUS = !TOG_STATUS;
         }
-        layer_on(_FN2);
-        update_tri_layer_RGB(_FN1, _FN2, _FN3);
+        layer_on(_F_CTRL);
+        update_tri_layer_RGB(_F_INPUT, _F_CTRL, _F_KBD);
       } else {
-        layer_off(_FN2);
+        layer_off(_F_CTRL);
         TOG_STATUS = false;
-        update_tri_layer_RGB(_FN1, _FN2, _FN3);
+        update_tri_layer_RGB(_F_INPUT, _F_CTRL, _F_KBD);
       }
       return false;
       break;
-    /*case FN3:
+    case F_KBD:
         if (record->event.pressed) {
-          layer_on(_ADJUST);
+          layer_on(_F_KBD);
         } else {
-          layer_off(_ADJUST);
+          layer_off(_F_KBD);
         }
         return false;
-        break;*/
+        break;
       //led operations - RGB mode change now updates the RGB_current_mode to allow the right RGB mode to be set after reactive keys are released
     case EISU:
       if (record->event.pressed) {
@@ -251,31 +282,6 @@ void matrix_init_user(void) {
 }
 
 
-#ifdef AUDIO_ENABLE
-
-void startup_user()
-{
-    _delay_ms(20); // gets rid of tick
-}
-
-void shutdown_user()
-{
-    _delay_ms(150);
-    stop_all_notes();
-}
-
-void music_on_user(void)
-{
-    music_scale_user();
-}
-
-void music_scale_user(void)
-{
-    PLAY_SONG(music_scale);
-}
-
-#endif
-
 
 //SSD1306 OLED update loop, make sure to add #define SSD1306OLED in config.h
 #ifdef SSD1306OLED
@@ -301,10 +307,10 @@ void matrix_update(struct CharacterMatrix *dest,
 
 //assign the right code to your layers for OLED display
 #define L_BASE 0
-#define L_FN1 (1<<_FN1)
-#define L_FN2 (1<<_FN2)
-#define L_FN3 (1<<_FN3)
-#define L_FN_TRI (L_FN1|L_FN2|L_FN3)
+#define L_F_INPUT (1<<_F_INPUT)
+#define L_F_CTRL (1<<_F_CTRL)
+#define L_F_KBD (1<<_F_KBD)
+#define L_FN_TRI (L_F_INPUT|L_F_CTRL|L_F_KBD)
 
 static void render_logo(struct CharacterMatrix *matrix) {
 
@@ -339,17 +345,17 @@ void render_status(struct CharacterMatrix *matrix) {
   matrix_write_P(matrix, PSTR("\nLayer: "));
     switch (layer_state) {
         case L_BASE:
-           matrix_write_P(matrix, PSTR("QWERTY"));
+           matrix_write_P(matrix, PSTR("BASE"));
            break;
-        case L_FN1:
-           matrix_write_P(matrix, PSTR("Alts"));
+        case L_F_INPUT:
+           matrix_write_P(matrix, PSTR("Alt"));
            break;
-        case L_FN2:
+        case L_F_CTRL:
            matrix_write_P(matrix, PSTR("Functions"));
            break;
-        case L_FN3:
+        case L_F_KBD:
         case L_FN_TRI:
-           matrix_write_P(matrix, PSTR("SUPER"));
+           matrix_write_P(matrix, PSTR("KBD Ctrl"));
            break;
         default:
            matrix_write(matrix, buf);
