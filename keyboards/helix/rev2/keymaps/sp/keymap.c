@@ -241,6 +241,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
         break;
       //led operations - RGB mode change now updates the RGB_current_mode to allow the right RGB mode to be set after reactive keys are released
+    case CrLCK:
+        if (record->event.pressed) {
+          if((layer_state & (1<<_CURSOR)) == 0){
+            layer_on(_CURSOR);
+          } else {
+            layer_off(_CURSOR);
+          }
+        }
+        return false;
+        break;
+    
     case EISU:
       if (record->event.pressed) {
         if(keymap_config.swap_lalt_lgui==false){
@@ -311,6 +322,7 @@ void matrix_update(struct CharacterMatrix *dest,
 #define L_F_INPUT (1<<_F_INPUT)
 #define L_F_CTRL (1<<_F_CTRL)
 #define L_F_KBD (1<<_F_KBD)
+#define L_CURSOR (1<<_CURSOR)
 #define L_FN_TRI (L_F_INPUT|L_F_CTRL|L_F_KBD)
 
 static void render_logo(struct CharacterMatrix *matrix) {
@@ -327,23 +339,11 @@ static void render_logo(struct CharacterMatrix *matrix) {
 
 
 void render_status(struct CharacterMatrix *matrix) {
-
-  // Render to mode icon
-  static char logo[][2][3]={{{0x95,0x96,0},{0xb5,0xb6,0}},{{0x97,0x98,0},{0xb7,0xb8,0}}};
-  if(keymap_config.swap_lalt_lgui==false){
-    matrix_write(matrix, logo[0][0]);
-    matrix_write_P(matrix, PSTR("\n"));
-    matrix_write(matrix, logo[0][1]);
-  }else{
-    matrix_write(matrix, logo[1][0]);
-    matrix_write_P(matrix, PSTR("\n"));
-    matrix_write(matrix, logo[1][1]);
-  }
-
   // Define layers here, Have not worked out how to have text displayed for each layer. Copy down the number you see and add a case for it below
+
   char buf[40];
   snprintf(buf,sizeof(buf), "Undef-%ld", layer_state);
-  matrix_write_P(matrix, PSTR("\nLayer: "));
+  matrix_write_P(matrix, PSTR("\nMODE:"));
     switch (layer_state) {
         case L_BASE:
            matrix_write_P(matrix, PSTR("BASE"));
@@ -364,10 +364,11 @@ void render_status(struct CharacterMatrix *matrix) {
 
   // Host Keyboard LED Status
   char led[40];
-    snprintf(led, sizeof(led), "\n%s  %s  %s",
-            (host_keyboard_leds() & (1<<USB_LED_NUM_LOCK)) ? "NUMLOCK" : "       ",
+    snprintf(led, sizeof(led), "\n%s %s %s %s",
+            (host_keyboard_leds() & (1<<USB_LED_NUM_LOCK)) ? "NUM" : "   ",
             (host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK)) ? "CAPS" : "    ",
-            (host_keyboard_leds() & (1<<USB_LED_SCROLL_LOCK)) ? "SCLK" : "    ");
+            (host_keyboard_leds() & (1<<USB_LED_SCROLL_LOCK)) ? "SCLK" : "    ",
+            (layer_state & L_CURSOR) ? "CURSOR" : "      ");
   matrix_write(matrix, led);
 }
 
@@ -382,11 +383,11 @@ void iota_gfx_task_user(void) {
 #endif
 
   matrix_clear(&matrix);
-  if(is_master){
+  //if(is_master){
     render_status(&matrix);
-  }else{
-    render_logo(&matrix);
-  }
+  //}else{
+  //  render_logo(&matrix);
+  //}
   matrix_update(&display, &matrix);
 }
 
