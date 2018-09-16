@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#define SSD1306OLED
 #include "bootloader.h"
 #ifdef PROTOCOL_LUFA
 #include "lufa.h"
@@ -15,8 +16,8 @@
 #define ANEXT LALT(KC_RGHT)
 #define CAD LCA(KC_DEL)
 #define SCE LCTL(LSFT(KC_ESC))
-#define CA+Z LCTL(LALT(KC_Z))
-#define CS+Z LCTL(LSFT(KC_Z))
+#define CAZ LCTL(LALT(KC_Z))
+#define CSZ LCTL(LSFT(KC_Z))
 
 
 extern keymap_config_t keymap_config;
@@ -121,7 +122,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           SCE,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,     CAD, \
       _______,  KC_F11,  KC_F12, _______, _______, _______,                   _______, _______, _______, _______, _______, _______, \
       _______, _______, _______, _______,  KC_INS, KC_PAUS,                   _______, _______, _______, _______, _______, _______, \
-      _______,    CA+Z,    CS+Z, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGUP, _______, \
+      _______,     CAZ,     CSZ, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGUP, _______, \
       _______, _______, _______, KC_CAPS, KC_SLCK, _______, _______, _______, _______, KC_PSCR,   CrLCK, KC_HOME, KC_PGDN, KC_END \
       ),
 
