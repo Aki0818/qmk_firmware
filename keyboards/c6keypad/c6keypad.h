@@ -9,7 +9,7 @@
 ) \
 { \
     { k_insert, k_home, k_pgup,\
-      k_delete, k_end , k=pgdn } \
+      k_delete, k_end , k_pgdn } \
 } 
 
 #endif
